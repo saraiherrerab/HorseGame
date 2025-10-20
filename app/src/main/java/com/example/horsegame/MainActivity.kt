@@ -212,7 +212,8 @@ class MainActivity: AppCompatActivity() {
                 var height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, heigth_cell, getResources().getDisplayMetrics()).toInt()
                 var widht = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, widht_cell, getResources().getDisplayMetrics()).toInt()
 
-                iv.setLayoutParams(TableRow.LayoutParams(width, height))
+                iv.layoutParams = TableRow.LayoutParams(widht, height)
+
             }
         }
 
