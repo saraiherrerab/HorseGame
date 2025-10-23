@@ -11,18 +11,22 @@ import android.view.View
 import android.widget.TableRow
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-
-
+import java.lang.reflect.Type
 
 
 @Suppress("DEPRECATION")
 class MainActivity: AppCompatActivity() {
     private var cellSelected_x = 0
     private var cellSelected_y = 0
+    private var width_bonus = 0
 
+    private var levelMoves= 64
     private var movesRequired = 4
     private var moves = 64
     private var options = 0
+    private var bonus = 0
+
+
     private var nameColorBlack = "black_cell"
     private var nameColorWhite= "white_cell"
 
@@ -97,10 +101,45 @@ class MainActivity: AppCompatActivity() {
 
     }
 
+    // CÓDIGO CORREGIDO
+    private fun growProgressBonus(){
+
+        var moves_done = levelMoves -moves
+        var bonus_done = moves_done/ movesRequired
+        var moves_rest = movesRequired * (bonus_done)
+        var bonus_grow= moves_done - moves_rest
+
+        // Este ID DEBE EXISTIR en el XML:
+        var v = findViewById<View>(R.id.vNewBonus)
+
+        var widthBonus = ((width_bonus/movesRequired) * bonus_grow).toFloat()
+
+        // Obtener las métricas una sola vez
+        val metrics = resources.displayMetrics
+
+        // Forma correcta de usar applyDimension: (unit, value, metrics) -> Float
+        // Para el height, usas el valor directo (8f)
+        var height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8f, metrics).toInt()
+
+        // Para el width, usas el cálculo (widthBonus)
+        var width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, widthBonus, metrics).toInt()
+
+        v.setLayoutParams(TableRow.LayoutParams(width, height))
+    }
+
     private fun selectCell(x: Int, y: Int){
         moves--
         var tvMovesData = findViewById<TextView>(R.id.tvMovesData)
         tvMovesData.text = moves.toString()
+
+        growProgressBonus()
+
+        if(board[x][y] ==2){
+            bonus++
+            var tvBonusData= findViewById<TextView>(R.id.tvBonusData)
+            tvBonusData.text = " +$bonus"
+        }
+
         board[x][y] = 1
         paintHorseCell(cellSelected_x, cellSelected_y, "previous_cell")
         cellSelected_x = x
@@ -192,7 +231,7 @@ class MainActivity: AppCompatActivity() {
                 options++
                 paintOptions(option_x, option_y)
 
-                board[option_x][option_y] = 9
+                if (board[option_x][option_y]==0) board[option_x][option_y] = 9
             }
         }
 
@@ -237,17 +276,19 @@ class MainActivity: AppCompatActivity() {
         val width_dp = (width/ getResources().getDisplayMetrics().density)
         var lateralMarginDP = 0
 
-        val widht_cell =(width_dp - lateralMarginDP)/8
-        val heigth_cell= widht_cell
+        val width_cell =(width_dp - lateralMarginDP)/8
+        val heigth_cell= width_cell
+
+        width_bonus = 2* width_cell.toInt()
 
         for (i in 0..7){
             for(j in 0..7){
                 iv= findViewById(resources.getIdentifier("c$i$j","id", packageName))
 
                 var height = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, heigth_cell, getResources().getDisplayMetrics()).toInt()
-                var widht = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, widht_cell, getResources().getDisplayMetrics()).toInt()
+                var width = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, width_cell, getResources().getDisplayMetrics()).toInt()
 
-                iv.layoutParams = TableRow.LayoutParams(widht, height)
+                iv.layoutParams = TableRow.LayoutParams(width, height)
 
             }
         }
