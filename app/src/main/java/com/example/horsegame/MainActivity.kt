@@ -152,9 +152,41 @@ class MainActivity: AppCompatActivity() {
 
         if (moves>0){
             checkNewBonus()
-           // checkGameOver(x,y)
+            checkGameOver(x,y)
         }
-        // else checkSuccessfulEnd
+         else showMessage("You win", "Next level!",  false)
+    }
+
+    private fun showMessage(title: String, action: String, gameOver: Boolean){
+        var lyMessage = findViewById<LinearLayout>(R.id.lyMessage)
+        lyMessage.visibility = View.VISIBLE
+
+        var tvTitleMessage = findViewById<TextView>(R.id.tvTitleMessage)
+        tvTitleMessage.text = title
+
+        var tvTimeData = findViewById<TextView>(R.id.tvTimeData)
+        var score: String = ""
+        if(gameOver){
+            score = "Score" + (levelMoves-moves)+ "/" + levelMoves
+        } else{
+            score = tvTimeData.text.toString()
+        }
+
+        var tvScoreMessage = findViewById<TextView>(R.id.tvScoreMessage)
+        tvScoreMessage.text = score
+
+        var tvAction = findViewById<TextView>(R.id.tvAction)
+        tvAction.text = action
+
+
+    }
+
+    private fun checkGameOver(x:Int, y:Int){
+        if(options ==0){
+            if(bonus == 0){
+                showMessage("Game Over", "Try again!",  true)
+            }
+        }
     }
 
     private fun checkNewBonus(){
@@ -263,7 +295,7 @@ class MainActivity: AppCompatActivity() {
 
     private fun initScreenGame(){
         setSizeBoard()
-        hide_message()
+        hideMessage()
     }
     private fun setSizeBoard(){
         var iv: ImageView
@@ -294,7 +326,7 @@ class MainActivity: AppCompatActivity() {
         }
 
     }
-    private fun hide_message(){
+    private fun hideMessage(){
         var lyMessage = findViewById<LinearLayout>(R.id.lyMessage)
         lyMessage.visibility = View.INVISIBLE
     }
